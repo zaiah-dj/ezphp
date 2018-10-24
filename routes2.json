@@ -1,0 +1,10 @@
+{
+ "bacon":  { "model": "bacon", "view": "bacon" },
+ "admin":  { "model": "admin", "view": "admin" },
+
+ "blue":   { "model": "admin", "view": "bleu" },
+ "feta":   { "model": "admin", "view": "feta"  },
+ "cheddar":{ "model": "admin", "view": "cheddar" },
+
+ "test":   { "model": "test", "view": "test" }
+}

@@ -1,0 +1,66 @@
+<html>
+<head>
+	<link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
+	<link href="/static/index.css" rel="stylesheet">
+
+	<!-- Open graph works with: Facebook, Twitter, and some more -->
+	<meta property="og:url" content="" /> <!-- URL -->
+	<meta property="og:type" content="" /> <!-- Type (article, image, app?) -->
+	<meta property="og:title" content="" /> <!-- Title -->
+	<meta property="og:description" content="" /> <!-- Description -->
+	<meta property="og:image" content="" />   <!-- Users have chosen images for each post if they want -->
+	<meta property="og:locale" content="" />   <!-- Users' chosen locale -->
+
+	<!-- Twitter uses cards (but they can probably also use opengraph...)
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="" />   				<!-- Your username -->
+	<meta name="twitter:creator" content="summary" /> <!-- Creator? (Maybe the actual author name) -->
+</head>
+
+<body>
+
+<!-- Header -bar -->
+<div class="header-bar ">
+	<!-- logo text -->
+	<div id=logo>
+		{{ logo-text }}	
+	</div>
+
+	<!-- Search form -->
+	<form id=search action=/search method=GET>
+		<label for=search>Search</label>
+		<input type=text name=search class=purtySearch></input>
+	</form>
+
+	<!-- Navigation -->	
+	<div class=nav>
+		<ul>
+		{{# atags }}
+			<li><a href="{{ href }}" alt="{{ alt }}">{{ text }}</a></li>
+		{{/ atags }}	
+		</ul>
+	</div>
+</div>
+
+
+<!-- posts and stuff -->
+<div class=posts>
+	{{#main}}
+	<h2><a class=post-titles href=/single/{{ posts_id }}>{{ title }}</a></h2>
+	<p>By {{ name }}</p>
+	{{/main}}
+		
+	<div class=post>
+	{{#posts}}
+		<p>{{ content }}</p>
+	{{/posts}}
+	</div>	
+
+	<ul>
+		<li><a href=/>Leave a comment</a></li>
+		<li><a href=/>Leave something else</a></li>
+	</ul>
+</div>
+
+</body>
+</html>

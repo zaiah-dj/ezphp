@@ -1,0 +1,54 @@
+
+/*
+li { border: 1px solid black; }
+p { border: 1px solid black; }
+div { border: 1px solid black; }
+*/
+
+.post {
+	background-color: #fcf2f2; 
+	margin-bottom: 20px;
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-gecko-border-radius: 10px;
+	padding: 20px;
+}
+
+#logo, h1, h2, h3 {
+	font-family: 'Lobster', cursive;
+	color: white;
+}
+
+#logo {
+	font-size: 2em;
+}
+
+.purtySearch {
+	font-size: 1.2em;
+	padding: 5px;
+}
+
+a.post-titles, a.post-titles:visited {
+	text-decoration: none;
+	color: black;
+	text-transform: capitalize;
+}
+
+a.post-titles:hover {
+	text-decoration: underline;
+}
+
+html {
+	background-color: #632725; 
+	font-family: 'Didact Gothic', sans-serif;
+	font-size: 1.2em;
+}
+
+input {
+	font-family: 'Didact Gothic', sans-serif;
+	font-size: 1.2em;
+}
+
+#container {
+	background-color: #632725; 
+}

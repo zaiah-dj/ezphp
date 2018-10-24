@@ -1,0 +1,3 @@
+<?php
+/*Routing class*/
+?>

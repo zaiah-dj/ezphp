@@ -1,0 +1,6 @@
+/* Debuggable CSS */
+table.debug {
+	border: 1px solid black;
+	background-color: #eeefff;
+	vertical-align: top;
+}

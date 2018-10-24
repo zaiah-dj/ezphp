@@ -1,0 +1,63 @@
+<!-- a full post -->
+<html>
+<head>
+	<!-- Open graph works with: Facebook, Twitter, and some more -->
+	<meta property="og:url" content="" /> <!-- URL -->
+	<meta property="og:type" content="" /> <!-- Type (article, image, app?) -->
+	<meta property="og:title" content="" /> <!-- Title -->
+	<meta property="og:description" content="" /> <!-- Description -->
+	<meta property="og:image" content="" />   <!-- Users have chosen images for each post if they want -->
+	<meta property="og:locale" content="" />   <!-- Users' chosen locale -->
+
+	<!-- Twitter uses cards (but they can probably also use opengraph...)
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:site" content="" />   				<!-- Your username -->
+	<meta name="twitter:creator" content="summary" /> <!-- Creator? (Maybe the actual author name) -->
+</head>
+
+<body>
+
+<!-- Header -bar -->
+<div class="header-bar ">
+	<!-- logo text -->
+	<div id=logo>
+		{{ logo-text }}	
+	</div>
+
+	<!-- Search form -->
+	<form id=search action=/search method=GET>
+		<input type=text value=search>Search</input>
+	</form>
+
+	<!-- Navigation -->	
+	<div class=nav>
+		<ul>
+		{{# atags }}	
+			<li><a href="{{ href }}" alt="{{ alt }}">{{ text }}</a></li>
+		{{/ atags }}	
+		</ul>
+	</div>
+</div>
+
+
+<!-- posts and stuff -->
+<div class=posts>
+	<div class=post>
+	<h2>{{ title }}</h2>
+	{{#posts}}
+		<p>{{ content }}</p>
+		{{# content.paragraphs }}
+		{{# content.subheading }}
+		<h3>{{ subheading }}</h3>
+		{{/ content.subheading }}
+		<p>
+			{{ content.paragraphs.content }}
+		</p>	
+		{{/ content.paragraphs }}
+	{{/posts}}
+	</div>	
+</div>
+
+</body>
+</html>
+

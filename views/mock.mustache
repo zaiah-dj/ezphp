@@ -1,0 +1,75 @@
+<!-- Add some head stuff -->
+<html>
+
+
+
+
+<!-- Runs through a bunch of different template types -->
+
+<!-- Test text -->
+<li>{{ dtext }}</li>
+
+
+<!-- Test integers -->
+<li>{{ dint }}</li>
+
+
+<!-- Test floats -->
+<li>{{ dfloat }}</li>
+
+
+<!-- Test booleans -->
+<h2>Boolean</h2>
+{{#dbool}}
+	<li>This value shows because $dbool is true</li>
+{{/dbool}}
+
+<h2>Boolean (Negation)</h2>
+{{^dbool}}
+	<li>This value will never show because $dbool is true</li>
+{{/dbool}}
+
+<!-- Test numeric arrays -->
+<h2>Numeric Array</h2>
+{{#diarray }}
+	<li>This value shows because $dbool is true</li>
+{{/diarray }}
+
+
+<!-- Test associative arrays -->
+<h2>Regular Associative Array</h2>
+<ul>
+{{#daarray }}
+	<li>{{ swedish }}</td>
+	<li>{{ japanese }}</td>
+	<li>{{ german }}</td>
+{{/daarray }}
+</ul>
+
+
+<!-- Test nested associative arrays (2 deep?) -->
+<h2>Nested Associative Arrays</h2>
+<table>
+{{#d2array }}
+	<tr>
+		<td>{{ anime }}</td>
+		<td>{{ author }}</td>
+	</tr>
+{{/d2array }}
+</table>
+
+
+<!-- Test resources / queries -->
+<h2>Database Tables</h2>
+<table>
+{{#drsrc }}
+	<tr>
+		<td>{{ id }}</td>
+		<td>{{ bar }}</td>
+		<td>{{ name }}</td>
+	</tr>
+{{/drsrc }}
+</table>
+
+
+</html>

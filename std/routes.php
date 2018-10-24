@@ -1,0 +1,16 @@
+<?php
+
+//Dump the functions
+/*
+for ( $i = 0; $i < sizeof( $config ); ++$i ) 
+{
+	echo "<ul>";
+	//Dump what you found
+	echo "<li>" . $config[ $i ]->route . "</li>" ;
+	echo "<li>" . $config[ $i ]->model . "</li>" ;
+	echo "<li>" . $config[ $i ]->view  . "</li>" ;
+	echo "</ul>";
+}
+*/
+
+?>

@@ -1,0 +1,15 @@
+[
+{ "route": "bacon", "model": "bacon", "view": "bacon" },
+{ "route": "single", "model": "single", "view": "single" },
+{ "route": "admin", "model": "admin", "view": "admin" },
+{ "route": "auth", "model": "auth-test", "view": "auth-test" },
+
+{ "route": "bleu",   "model": "admin", "view": "bleu" },
+{ "route": "feta",   "model": "admin", "view": "feta"  },
+{ "route": "cheddar","model": "admin", "view": "cheddar" },
+
+{ "route": "login", "model": "admin", "view": "admin" },
+{ "route": "logout", "model": "admin", "view": "admin" },
+{ "route": "test", "model": "test", "view": "test" },
+{ "route": "robots.txt", "model": "robots", "view": "robots", "content-type":"text/plain" }
+]

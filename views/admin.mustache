@@ -1,0 +1,62 @@
+<html>
+<head>
+
+	<!-- meta -->	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- css -->
+<!--
+	{{#css}}
+		<link rel=stylesheet href="{{ href }}" />
+	{{/css}}
+-->
+
+	<link rel=stylesheet href="/static/admin.css" />
+	<link rel=stylesheet href="/static/pure-min.css" />
+
+	<!-- scripts -->
+<!--
+	{{#js}}
+		<script type=text/javascript src="{{ href }}" />
+	{{/js}}
+-->
+
+	<script type=text/javascript src=/static/jquery.js></script>
+	<script type=text/javascript src=/index.js></script>
+
+</head>
+
+
+<body>
+	{{^authenticated}}
+	You're not logged in
+	<form method=POST action=/login>
+		<fieldset>User name</fieldset>
+		<input type=text name=un></input>
+		<fieldset>Password</fieldset>
+		<input type=password name=pwd></input>
+		<input type=submit></input>
+	</form>
+	{{/authenticated}}
+
+
+
+	{{#authenticated}}
+	You're logged in
+	<a href=/admin>Admin Home</a>
+	<a href=/logout>Log Out</a>
+
+	<h2>Links of Death</h2>
+	<li>Link of Death #1</li>
+	<li>Link of Death #2</li>
+	<li>Link of Death #3</li>
+
+		<h2>Posts</h2>
+		{{#posts}}
+			<p><a href=/admin/post/{{ posts_id }}>{{ title }}</a></p>
+		{{/posts}}	
+	{{/authenticated}}
+
+</body>
+
+</html>
