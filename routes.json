@@ -1,6 +1,10 @@
 [
 { "route": "bacon", "model": "bacon", "view": "bacon" },
-{ "route": "single", "model": "single", "view": "single" },
+
+{ "route": "dualmodel", "model": [ "single", "double" ], "view": "single" },
+{ "route": "dualview", "model": [ "single", "double" ], "view": "single" },
+{ "route": "dualmodelview", "model": [ "single", "double" ], "view": ["single","double" ] },
+
 { "route": "admin", "model": "admin", "view": "admin" },
 { "route": "auth", "model": "auth-test", "view": "auth-test" },
 

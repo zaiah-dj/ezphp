@@ -40,6 +40,47 @@ class Backend
 	//A "global" database handle
 	private $dbo;
 
+	//All the statuses... all of 'em
+	private $HTTP_STATI = array(
+		100 => "Continue",
+		101 => "Switching Protocols", 
+		200 => "OK",
+		201 => "Created",
+		202 => "Accepted",
+		204 => "No Content",
+		206 => "Partial Content",
+		300 => "Multiple Choices",
+		301 => "Moved Permanently",
+		302 => "Found",
+		303 => "See Other",
+		304 => "Not Modified",
+		305 => "Use Proxy",
+		307 => "Temporary Redirect",
+		400 => "Bad Request",
+		401 => "Unauthorized",	
+		403 => "Forbidden",			
+		404 => "Not Found",				
+		405 => "Method Not Allowed",
+		406 => "Not Acceptable",
+		407 => "Proxy Authentication Required",
+		408 => "Request Timeout",
+		409 => "Conflict",
+		410 => "Gone",
+		411 => "Length Required",
+		412 => "Precondition Failed",
+		413 => "Request Entity Too Large",
+		414 => "Request URI Too Long",
+		415 => "Unsupported Media Type",
+		416 => "Requested Range",
+		417 => "Expectation Failed",
+		418 => "I'm a teapot",
+		500 => "Internal Server Error",
+		501 => "Not Implemented",
+		502 => "Bad Gateway",
+		503 => "Service Unavailable",
+		504 => "Gateway Timeout"
+	);
+
 	//Run this when dong certain things...
 	private function convert_s2a ( $query ) 
 	{
@@ -97,6 +138,18 @@ class Backend
 			return NULL;
 		}
 		return $this->convert_s2a( $newQuery );
+	}
+
+
+	// server_throw( 500, "what happened" ) or server_throw( 200, "everything is
+	// grand" )
+	public function server_throw ( $status, $msg, $optional=null ) {
+		//a struct or array
+		//render a page with a pretty message
+		//clear everything that came before...
+		$status_line = $this->HTTP_STATI[ $status ];
+		include "std/error.php";
+		die();
 	}
 
 
@@ -190,14 +243,11 @@ class Backend
 
 	//Probably heavy on memory to run this everytime, so consider another way to
 	//approach this
-	function __construct()
-	{
+	function __construct() {
 		//Load each json file and decode it, failing if errors are encountered.
-		foreach ( $this->files as $cfg )
-		{
+		foreach ( $this->files as $cfg ) {
 			//Check if the file exists
-			if ( !stat( $cfg ) )
-			{
+			if ( !stat( $cfg ) ) {
 				printf("%s does not exist at our current directory.\n", $cfg) ;
 				die();
 			}
@@ -214,30 +264,37 @@ class Backend
 		//for example, this should not be a zero-length array
 
 		//Turn the routes into an array for quick lookups
-		for ( $i = 0; $i < sizeof( $this->routeList ); ++$i )
-		{
+		for ( $i = 0; $i < sizeof( $this->routeList ); ++$i ) {
+			//TODO: Handle other non-existent routes and "details"
 			//No route means fatal error
 			/*if ( array_key_exists( route, $config[ $i ] ) ) {
 				throw new Exception( "No route specified at line x...\n" );
 			}*/
 
-			//No model or view means hit default
-			$this->routes[ $this->routeList[$i]->route ][ "model" ] = $this->routeList[ $i ]->model; 
-			$this->routes[ $this->routeList[$i]->route ][ "view" ]  = $this->routeList[ $i ]->view; 
+			//strings, functions and arrays ought to be allowed
+			$mtype = gettype( $this->routeList[ $i ]->model );
+			$vtype = gettype( $this->routeList[ $i ]->view );
+
+			//Convert models to an array
+			$this->routes[ $this->routeList[$i]->route ][ "model" ] = ( $mtype != 'array' ) ?
+				[ $this->routeList[ $i ]->model ] : $this->routeList[ $i ]->model; 
 		
+			//Convert views to an array	
+			$this->routes[ $this->routeList[$i]->route ][ "view" ] = ( $vtype != 'array' ) ?
+				[ $this->routeList[ $i ]->view ] : $this->routeList[ $i ]->view; 
+
 			//Check for content type changes
 			$this->routes[ $this->routeList[ $i ]->route ][ "ctype" ] = null;
 		}
 
 		//Dump the classes to make sure that it looks good.
-		//var_dump ( $this->routes );
+		//$this->dump ( $this->routes );
 
 		//Finally, break up the URL for our super simple routing mechanism.
 		//parse URL - only answer the first part
 		$this->url = parse_url( $_SERVER[ "REQUEST_URI" ] );
 		$this->url = explode( "/", $this->url["path"] );
 		$this->route = (sizeof($this->url) > 1) ? $this->url[1] : null; 
-
 
 		//If the backend is sqlite, check that it exists
 		if ( $this->config->backend == sqlite3) {
@@ -266,10 +323,14 @@ class Backend
 }
 
 
+
 //Initialize some objects
 $m = new Mustache_Engine;
 $g = new Backend;
 $route = null;
+
+//$g->server_throw( 500, "i hate you..." );
+//die();
 
 
 //Serve your default route if there was no url or if the route is not supposed to be answered
@@ -326,28 +387,31 @@ else {
 }
 
 
-//One final check, make sure files exist (if we get here, that's bad...)
-//TODO: if $g->model is an array, obviously loop
-if ( !stat( $g->model ) )
-{
-	//Model file doesn't exist.
-	//if ( !stat( "std/404.php" ) )
-	echo "<h2>500 Internal Server Error</h2>" . 
-			 "<p>Model file for resource not found.</p>"
-	;
-	die();
+
+//all of these files functions whatever, can be put into one big array and
+//executed at once, to prevent the need for multiple loops
+//$an_array = new array();
+
+
+//Check and make sure that files and views exist and can all be executed...
+foreach ( $g->model as $mfile ) {
+	try {
+		//Check for file 
+		( !stat( $mfile ) ) ? server_throw( 500, "model file doesn't exist." ) : 0;
+		//Include the file
+		( 1 ) ? include ( $mfile ) : 0; 
+	}
+	catch ( Exception $e ) {
+		server_throw( 500, "Couldn't handle all the awesomeness that is in $mfile:
+$e->getMessage()" );
+	}
 }
 
-//If there was a content type, make sure this exists too.
-//TODO: if $g->view is an array, obviously loop
-if ( !stat( $g->view ) )
-{
-	//View file doesn't exist
-	echo "<h2>500 Internal Server Error</h2>" . 
-			 "<p>View file for resource not found.</p>"
-	;
-	die();
+//views can be executed a certain way too
+foreach ( $g->view as $vfile ) {
+	( !stat( $vfile ) ) ? server_throw( 500, "view file doesn't exist." ) : 0;
 }
+
 
 
 //You made it to the end with no serious errors.

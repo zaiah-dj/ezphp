@@ -1,0 +1,25 @@
+/*error.css*/
+body._200 { background-color: blue; }
+body._400 { background-color: green; color: black; }
+body._500 { background-color: red; color: white; }
+h2 { font-size: 2.5em; line-height: 20px; }
+h3 { font-size: 1.6em; line-height: 10px; }
+p { font-size: 1.2em; }
+.container {
+	width: 80%;
+	border: 1px solid white;
+	margin: 0 auto;
+	margin-top: 50px;
+	padding: 20px;
+	min-width: 300px;
+}
+.container-inner p, pre {
+	background-color: black;
+	padding: 5px;
+}
+.container-footer {
+	padding: 5px;
+	width: 100%;
+}
+.container-footer .left { float: left; width: 40%; }
+.container-footer .right { float: right; width: 40%; }
