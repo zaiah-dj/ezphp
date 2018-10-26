@@ -1,0 +1,47 @@
+[
+	{ 
+		"route": "cheeses", 
+	  "pre": "header",
+	  "post": "footer",
+	  "parameter": { "name": "age", "type": "int", "method": "GET" } },
+	  "content-type": "text/html",
+		"throw": "...",
+		"routes": [ 
+			{ "route": "bleu",   "model": "admin", "view": "bleu" }
+		 ,{ "route": "feta",   "model": "admin", "view": "feta"  }
+		 ,{ "route": "cheddar","model": "admin", "view": "cheddar" }
+		]
+	}
+
+
+ ,{ 
+		"route": "blog",
+    "parameter": { "name": "existentialism", "type": "int","method": "GET" },
+
+	  "routes": [ 
+			{ "route": "a", "model": "b", "view": "yay" }
+		]
+	}
+
+
+ ,{ 
+		"route": "api"
+	 ,"content-type": "application/json"
+
+	 ,"routes": [ 
+			{ "route": "a", "model": "b", "view": [ "yay", "why" ] }
+		 ,{ "route": "a", "model": "b", "view": "yay" }
+		]
+	}
+
+
+ ,{ "route": "admin", "model": "admin", "view": "admin" }
+ ,{ "route": "auth", "model": "auth-test", "view": "auth-test" }
+
+
+ ,{ "route": "login", "model": "admin", "view": "admin" }
+ ,{ "route": "logout", "model": "admin", "view": "admin" }
+
+
+ ,{ "route": "robots.txt", "model": "robots", "view": "robots", "content-type":"text/plain" }
+]

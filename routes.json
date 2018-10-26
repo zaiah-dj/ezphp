@@ -1,19 +1,20 @@
 [
-{ "route": "bacon", "model": "bacon", "view": "bacon" },
+	{ "route": "bacon", "model": "bacon", "view": "bacon" },
 
-{ "route": "dualmodel", "model": [ "single", "double" ], "view": "single" },
-{ "route": "dualview", "model": [ "single", "double" ], "view": "single" },
-{ "route": "dualmodelview", "model": [ "single", "double" ], "view": ["single","double" ] },
+	{ "route": "dualmodel", "model": [ "single", "double" ], "view": "single" },
+	{ "route": "dualview", "model": [ "single", "double" ], "view": "single" },
+	{ "route": "dualmodelview", "model": [ "single", "double" ], "view": ["single","double" ] },
+	{ "route": "dualmodelview/usr", "model": [ "single", "double" ], "view": ["single","double" ] },
 
-{ "route": "admin", "model": "admin", "view": "admin" },
-{ "route": "auth", "model": "auth-test", "view": "auth-test" },
+	{ "route": "admin", "model": "admin", "view": "admin" },
+	{ "route": "auth", "model": "auth-test", "view": "auth-test" },
 
-{ "route": "bleu",   "model": "admin", "view": "bleu" },
-{ "route": "feta",   "model": "admin", "view": "feta"  },
-{ "route": "cheddar","model": "admin", "view": "cheddar" },
+	{ "route": "bleu",   "model": "admin", "view": "bleu" },
+	{ "route": "feta",   "model": "admin", "view": "feta"  },
+	{ "route": "cheddar","model": "admin", "view": "cheddar" },
 
-{ "route": "login", "model": "admin", "view": "admin" },
-{ "route": "logout", "model": "admin", "view": "admin" },
-{ "route": "test", "model": "test", "view": "test" },
-{ "route": "robots.txt", "model": "robots", "view": "robots", "content-type":"text/plain" }
+	{ "route": "login", "model": "admin", "view": "admin" },
+	{ "route": "logout", "model": "admin", "view": "admin" },
+	{ "route": "test", "model": "test", "view": "test" },
+	{ "route": "robots.txt", "model": "robots", "view": "robots", "content-type":"text/plain" }
 ]

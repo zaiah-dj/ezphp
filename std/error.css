@@ -5,6 +5,7 @@ body._500 { background-color: red; color: white; }
 h2 { font-size: 2.5em; line-height: 20px; }
 h3 { font-size: 1.6em; line-height: 10px; }
 p { font-size: 1.2em; }
+
 .container {
 	width: 80%;
 	border: 1px solid white;
@@ -13,6 +14,7 @@ p { font-size: 1.2em; }
 	padding: 20px;
 	min-width: 300px;
 }
+
 .container-inner p, pre {
 	background-color: black;
 	padding: 5px;

@@ -1,4 +1,19 @@
 <?php
+/* -------------------------------------------- *
+ * ezphp
+ * -----
+ *
+ * A lightweight MVC framework for PHP.
+ *
+ * Author
+ * ======
+ * Antonio R. Collins II (rc@tubularmodular.com)
+ *
+ * Summary
+ * ======= 
+ * ....
+ *
+ * -------------------------------------------- */
 //Define errors up here... 
 
 //Command line flags can go here too
@@ -19,18 +34,58 @@ if ( $argv && sizeof( $argv ) > 1 )
 }
 
 
+//Define a defualt name, this will change later...
+$default_ns = "default";
+
 //Do any requires here...
 require ( "vendor/mustache.php" );
+
+//Define a class for configuration
+
+//Define a class for content (models, views, and content-types)
+class Content 
+{
+	//Content buffer
+	public $content = null;
+
+	//List of mimetypes
+	private $mimetypes = array(
+
+	);
+
+	//...
+	private $file_to_mime = array(
+
+	);
+
+	//
+	private $buffer = "";
+
+	public function set_rendering_engine ( $engine ) {
+		//can only set your available ones 
+	}
+
+	public function set_content_type ( $ctype ) {
+		//can only set content types for your supported mimes 
+	}
+	
+	//
+	public function render ( $file, $table ) {
+		//mustache
+		$m->render( file_get_contents( $file, $table ) );
+	} 
+} 
 
 //Define a class for handling routes
 class Backend
 {
+	public  $content   = null;
 	private $url       = null;
 	private $routeList = null;
 	private $files     = array(
 		/*Source files for configuration*/
 		"config.json",
-		"routes.json"
+		"routes3.json"
 	);
 
 	public $config;
@@ -38,7 +93,7 @@ class Backend
 	public $route;
 
 	//A "global" database handle
-	private $dbo;
+	public $dbo;
 
 	//All the statuses... all of 'em
 	private $HTTP_STATI = array(
@@ -81,7 +136,13 @@ class Backend
 		504 => "Gateway Timeout"
 	);
 
-	//Run this when dong certain things...
+
+	/* -------------------------------------------- *
+   * convert_s2a ( $query ) 
+	 * 
+	 * Convert queries to associative arrays for
+   * easy templating with something like Mustache
+	 * -------------------------------------------- */
 	private function convert_s2a ( $query ) 
 	{
 		if ( !$query ) {
@@ -123,8 +184,26 @@ class Backend
 	}
 
 
-	//Do anything database related with files
-	public function dbexec ( $query ) 
+	/* -------------------------------------------- *
+	 * server_throw( status, message ) 
+	 * 
+	 * Throw new messages via a chosen source of
+	 * transport
+	 * -------------------------------------------- */
+	public function server_throw ( $status, $msg, $obj=null ) {
+		//clear everything that came before...
+		$status_line = $this->HTTP_STATI[ $status ];
+		include "std/error.php";
+		die();
+	}
+
+
+	/* -------------------------------------------- *
+	 * dbexec( query, ba )
+	 * 
+	 * Run inline SQL using bound arguments. 
+	 * -------------------------------------------- */
+	public function dbexec ( $query, $bindArgs = NULL ) 
 	{
 		if ( $this->config->debug ) {
 			echo "<li>" . $this->config->dbfile. "</li>";
@@ -141,20 +220,12 @@ class Backend
 	}
 
 
-	// server_throw( 500, "what happened" ) or server_throw( 200, "everything is
-	// grand" )
-	public function server_throw ( $status, $msg, $optional=null ) {
-		//a struct or array
-		//render a page with a pretty message
-		//clear everything that came before...
-		$status_line = $this->HTTP_STATI[ $status ];
-		include "std/error.php";
-		die();
-	}
-
-
-	//Do anything database related with files
-	public function dbfexec ( $file ) 
+	/* -------------------------------------------- *
+	 * dbfexec( file )
+	 * 
+	 * Run SQL from files using bound arguments. 
+	 * -------------------------------------------- */
+	public function dbfexec ( $file, $bindArgs = NULL ) 
 	{
 		$filename = "sql/" . $file . ".sql";
 		if ( !stat( $filename ) ) {
@@ -173,7 +244,12 @@ class Backend
 	}
 
 
-	//Check if route name exists, then check for model path, view path and special content types if any.
+	/* -------------------------------------------- *
+	 * check_route ( routeName )
+	 * 
+	 * Check if route name exists, then check for model 
+   * path, view path and special content types if any.
+	 * -------------------------------------------- */
 	public function check_route ( $routeName ) 
 	{
 		if ( !$routeName )
@@ -182,7 +258,14 @@ class Backend
 		return ( array_key_exists( $routeName, $this->routes) ); 
 	}
 
-	//Dump values in a human readable fashion (in a web browser or JSON) 
+
+	/* -------------------------------------------- *
+	 * dump ( routeName )
+	 * 
+	 * Dump values in a human readable fashion (in a 
+   * web browser or JSON).
+   * (This really beats print_r and var_dump).
+	 * -------------------------------------------- */
 	public function dump ( $var, $className = NULL ) 
 	{
 		if ( !$this->config->debug )
@@ -190,20 +273,20 @@ class Backend
 		else {
 			//if the type of var is something specific, I want to see formatted data
 			$_type = gettype( $var );
-			echo "type of var is: $_type";
+			//echo "type of var is: $_type";
 			printf( "\n<table class=\"%s\">\n", ( !$className ) ? "debug" : $className ); 
 			switch ( $_type ) {
 				case "boolean":
-					break;	
 				case "integer":
-					break;	
 				case "float":
-					break;	
 				case "string":
+					printf( "\t<tr>%s</tr>\n", $var );
 					break;	
 				case "array":
+				case "object":
 					foreach ( $var as $kk => $vv ) {
-						if ( gettype( $vv ) != "array" )
+						$tt = gettype( $vv );
+						if ( $tt != "array" && $tt != "object" )
 							printf( "\t<tr>\n\t\t<td>%s</td>\n\t\t<td>%s</td>\n\t</tr>\n", $kk, $vv );
 						else {
 							printf( "\t<tr>\n\t\t<td>%s</td>\n\t\t<td>", $kk );
@@ -211,8 +294,6 @@ class Backend
 							printf ( "</td>\n\t</tr>\n" );
 						}
 					}
-					break;	
-				case "object":
 					break;	
 				case "callable":
 					break;	
@@ -241,6 +322,14 @@ class Backend
 		}
 	}
 
+	//prepare routes from the list
+
+	//dump routes
+	public function dump_all_routes ( ) 
+	{
+		$this->dump( $this->routes );
+	}
+
 	//Probably heavy on memory to run this everytime, so consider another way to
 	//approach this
 	function __construct() {
@@ -259,11 +348,7 @@ class Backend
 			( $cfg == "config.json" ) ? $this->config = $tmp : $this->routeList = $tmp;
 		}
 
-		//TODO: zero-length model 
-		//check that this->routelist (routes.json) loaded correctly,
-		//for example, this should not be a zero-length array
-
-		//Turn the routes into an array for quick lookups
+		//TODO: check for zero-length route list?
 		for ( $i = 0; $i < sizeof( $this->routeList ); ++$i ) {
 			//TODO: Handle other non-existent routes and "details"
 			//No route means fatal error
@@ -276,6 +361,8 @@ class Backend
 			$vtype = gettype( $this->routeList[ $i ]->view );
 
 			//Convert models to an array
+//$this->dump( $this->routeList[ $i ]->model );die();
+
 			$this->routes[ $this->routeList[$i]->route ][ "model" ] = ( $mtype != 'array' ) ?
 				[ $this->routeList[ $i ]->model ] : $this->routeList[ $i ]->model; 
 		
@@ -323,111 +410,119 @@ class Backend
 }
 
 
-
 //Initialize some objects
 $m = new Mustache_Engine;
 $g = new Backend;
+$c = new Content;
 $route = null;
 
-//$g->server_throw( 500, "i hate you..." );
-//die();
 
-
-//Serve your default route if there was no url or if the route is not supposed to be answered
 //TODO: flexible default
-if ( !$g->route ) {
-	$g->dump("route does not exist");
-	$g->model = "models/default.php";
-	$g->view  = "views/default.mustache";
-	$g->ctype = "text/html";
-}
+//Serve your default route if there was no url or if the route is not supposed to be answered
+if ( !$g->route )
+	{ $g->model = [ "default" ]; $g->view = [ "default" ]; $g->ctype = "text/html"; }
 //If there was a URL, but we're not supposed to service it, serve a 404
 else if ( !$g->check_route( $g->route ) ) {
-	$g->dump("route exists, page not found");
-	$g->model = "std/404.php";
-	$g->view  = "std/404.mustache";
-	$g->ctype = "text/html";
+	$g->server_throw( 404, "route exists, page not found..." );
 }
 //Looks like a URL exists, and we're supposed to do some work.
 else {
 	//Answer to tests
-	if ( $g->route == "test" ) {
-		$g->dump("route 'test' requested!");
-		//$g->dump($model);
-		$g->model = "models/mock.php";
-		$g->view  = "views/mock.mustache";
-		$g->ctype = "text/html";
-	}
+	if ( $g->route == "test" ) 
+		{ $g->model = ["mock"]; $g->view = ["mock"]; $g->ctype = "text/html"; }
 	else {
 		//TODO: catch bad evaluation
-		$g->dump("other route requested.<br />");
+		//$g->dump("other route requested.<br />");
 
 		//TODO: function arr eval
 		//Check for requested model, if it doesn't exist, default might be what you want
-		$modelFile = ( array_key_exists ( "model", $g->routes [ $g->route ]) )
-			? $g->routes [ $g->route ][ "model" ] : "default"; 
+		//$modelFile = ( array_key_exists ( "model", $g->routes [ $g->route ]) )
+		$g->model = ( array_key_exists ( "model", $g->routes [ $g->route ]) )
+			? $g->routes [ $g->route ][ "model" ] : [ $default_ns ] ; 
 
 		//Same thing with views
-		$viewFile = ( array_key_exists ( "view", $g->routes [ $g->route ] ) )
-			? $g->routes [ $g->route ][ "view" ] : "default"; 
-			
+		//$viewFile = ( array_key_exists ( "view", $g->routes [ $g->route ] ) )
+		$g->view = ( array_key_exists ( "view", $g->routes [ $g->route ] ) )
+			? $g->routes [ $g->route ][ "view" ] : [ $default_ns ] ;
+
 		//...and content-type	
-		//$contentType = ...
 		//TODO: alternate content type
 		$g->ctype = "text/html";
-		$g->model = "models/" . $modelFile . ".php"; 
-		$g->view  = "views/" . $viewFile . ".mustache";
-
-		if ( $g->config->debug ) 
-		{
-			echo "Serving model: ". $g->model . "<br />" ;
-			echo "Serving view:  ". $g->view  . "<br />";
-		}	
 	}
 }
 
+if ( 1 ) {
+	//This is an example of what I'd like to see in a debug window
+	$vv = array( 
+		model => $g->model
+	 ,view  => $g->view
+	 ,route => $g->route
+	);
+
+	$g->dump( $vv );
+	$g->dump_all_routes();	
+	die();
+}
 
 
-//all of these files functions whatever, can be put into one big array and
-//executed at once, to prevent the need for multiple loops
-//$an_array = new array();
-
-
-//Check and make sure that files and views exist and can all be executed...
+//Check and make sure that model files all exist and work
 foreach ( $g->model as $mfile ) {
 	try {
-		//Check for file 
-		( !stat( $mfile ) ) ? server_throw( 500, "model file doesn't exist." ) : 0;
-		//Include the file
-		( 1 ) ? include ( $mfile ) : 0; 
+		//What is this value
+		$type = gettype( $mfile );
+		
+		//Execute what's asked
+		if ( $type == 'function' ) 
+			$mfile( );
+
+		//Or check for file 
+		else if ( $type == 'string' ) {
+			//Make a full file name.
+			$fname = "models/{$mfile}.php";
+			( !stat( $fname ) ) ? $g->server_throw( 500, "model file: $fname doesn't exist." ) : 0;
+			( 1 ) ? include ( $fname ) : 0; 
+		}
+	
+		//If debug is on, I want to see all of this crap...
+		//( 0 ) ? $g->dump($model) : 0;
 	}
 	catch ( Exception $e ) {
-		server_throw( 500, "Couldn't handle all the awesomeness that is in $mfile:
-$e->getMessage()" );
+		$str = $e->getMessage();
+		$strstr = "Couldn't handle all the awesomeness that is in $mfile: $str"; 
+		server_throw( 500, $strstr );
 	}
 }
 
-//views can be executed a certain way too
+
+//Check for the view file and load it (or something along those lines)
 foreach ( $g->view as $vfile ) {
-	( !stat( $vfile ) ) ? server_throw( 500, "view file doesn't exist." ) : 0;
+	//For right now (as of the next 2 hours), views are just files in mustache...
+	try {
+		if ( $g->ctype == "text/html" ) {
+			$fname = "views/{$vfile}.mustache";
+			( !stat( $fname ) ) ? server_throw( 500, "view file: $fname doesn't exist." ) : 0;
+			echo $m->render( file_get_contents( $fname ), $model );
+		}
+		/*
+		else if ( ... ) {
+			//xml, json, and whatnot ought to be able to kind of short-circuit in some
+			//cases... how do I get regular files?
+		}
+		*/
+		else {
+			//mmm, this seems wrong...
+			echo file_get_contents( $vfile );
+		}
+	}
+	catch ( Exception $ev ) {
+		$str = $e->getMessage();
+		$strstr = "Couldn't accurately represent the awesomeness that is in $vfile: $str"; 
+		server_throw( 500, $strstr );
+	}
 }
 
 
-
-//You made it to the end with no serious errors.
-//TODO: loop again, convert to an array
-include ( $g->model );
-$g->dump($model);
-
-
-//???
-if ( $g->ctype == "text/html" )
-	echo $m->render( file_get_contents( $g->view ), $model );
-else {
-	//force special content types...
-	echo file_get_contents( $g->view );
-}
-
+//Add a stub for simple debugging.
 if ( $g->config->debug ) {
 	echo "<link rel=stylesheet href=\"std/debug.css\">";
 	echo "<script src=\"std/debug.js\">";
