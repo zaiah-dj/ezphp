@@ -85,7 +85,7 @@ class Backend
 	private $files     = array(
 		/*Source files for configuration*/
 		"config.json",
-		"routes3.json"
+		"routes.json"
 	);
 
 	public $config;
@@ -268,7 +268,8 @@ class Backend
 	 * -------------------------------------------- */
 	public function dump ( $var, $className = NULL ) 
 	{
-		if ( !$this->config->debug )
+		//if ( !$this->config->debug )
+		if ( 0 )
 			return;
 		else {
 			//if the type of var is something specific, I want to see formatted data
@@ -347,6 +348,33 @@ class Backend
 			$tmp = json_decode( $tmp );
 			( $cfg == "config.json" ) ? $this->config = $tmp : $this->routeList = $tmp;
 		}
+
+		/*try yaml*/
+		try {
+			$this->config = yaml_parse_file( "config.yaml" );	
+			$this->routeList = yaml_parse_file( "routes.yaml" );	
+			//print_r( $this->config );
+			$this->dump( $this->config );
+			$this->dump( $this->routeList );
+			foreach ( $this->config as $kk => $vv ) {
+				echo $kk;
+				echo $vv;
+			}
+			die();
+		}
+		catch (Exception $e) {
+			$str = $e->getMessage();
+			echo $str;	
+			var_dump( $e );
+			die();
+		}
+		/*stop*/
+		
+
+		$this->dump( $this->config );
+		$this->dump( $this->routeList );
+		$this->dump( gettype( $this->routeList ) );
+		die();
 
 		//TODO: check for zero-length route list?
 		for ( $i = 0; $i < sizeof( $this->routeList ); ++$i ) {

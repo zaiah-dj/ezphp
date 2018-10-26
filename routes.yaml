@@ -1,9 +1,16 @@
 routes:
-	bacon: { model: bacon, view: bacon }
-	dualmodel: { model: [ single, double ], view: single }
-	dualview:
-		model: single
-		view: [single,double] 
-	admin:
-		model: admin
-		view: admin	
+ bacon: { model: bacon, view: bacon }
+ dualmodel: { model: [ single, double ], view: single }
+ dualview:
+  model: single
+  view: [single,double] 
+ admin:
+  model: admin
+  view: admin	
+ api:
+  costs:
+   model: admin
+   view: admin	
+  packages:
+   model: admin
+   view: admin	
