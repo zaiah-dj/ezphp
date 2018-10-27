@@ -1,4 +1,5 @@
 routes:
+ # A route named bacon
  bacon: { model: bacon, view: bacon }
  dualmodel: { model: [ single, double ], view: single }
  dualview:
@@ -7,9 +8,10 @@ routes:
  admin:
   model: admin
   view: admin	
+ # All of my API resources can go here
  api:
   costs:
-   model: admin
+   model: [admin, robo]
    view: admin	
   packages:
    model: admin

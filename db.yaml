@@ -1,0 +1,11 @@
+# db.yaml
+#
+# database files could technically be done here too...
+# we're about to hit a downturn...  maybe your idea has more validity than you
+# think...
+table_name:
+ column_name: column_type
+ thing: type 
+table_name_2:
+ column_name: column_type
+ item: varchar 

@@ -1,16 +1,15 @@
-config:
- dbfile:     "../test.db"
- db-backend: "sqlite3"
- debug:      1 
- description: "A site that talks about things."
- disqus:     0
- oauth:      0
- url:        "http://try.ramarcollins.com"
- title:      "My Awesome Website"
- image:      "/path/to/global/site/image.jpg"
- favicon:    "/path/to/favicon.ico"
- apps:       
-  facebook:    "facebook-app-id"
-  twitter:     "twitter-app-id"
-  google-plus: "google-plus-app-id"
- instagram:   "instagram-app-id"
+dbfile:     "../test.db"
+dbbackend:  "sqlite3"
+debug:      1 
+description: "A site that talks about things."
+disqus:     0
+oauth:      0
+url:        "http://try.ramarcollins.com"
+title:      "My Awesome Website"
+image:      "/path/to/global/site/image.jpg"
+favicon:    "/path/to/favicon.ico"
+apps:       
+ facebook:    "facebook-app-id"
+ twitter:     "twitter-app-id"
+ google-plus: "google-plus-app-id"
+instagram:   "instagram-app-id"
