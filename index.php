@@ -266,6 +266,15 @@ class Backend
 	public function server_throw ( $status, $msg, $obj=null ) {
 		//clear everything that came before...
 		$status_line = $this->HTTP_STATI[ $status ];
+
+echo "<h2>youoyoyoyousadpoifudsaoifjdsa;kfjdsalkfjdsj</h2>";
+echo "<p>
+aasdfsadfdsafsa
+dsafdsafdsaf
+sadfdsafd
+sadfdsaf
+sadfdsaf
+</p>";
 		include "std/error.php";
 		die();
 	}
@@ -357,9 +366,9 @@ class Route
 	);
 
 	//all properties used to handle things later
+	private $ctype = "text/html";  //default to text/html
 	private $models = array();
 	private $views = array();
-	private $ctype = array();
 	private $parameters = array();
 	private $methods = array();
 	private $throw = array();
@@ -376,6 +385,10 @@ class Route
 	private $url;
 	private $urlpath;
 
+	//still need getters...
+	public function getmodels () { return $this->models; }
+	public function getviews () { return $this->views; }
+
 	//An error reporting function
 	private function err ( $code, $args = NULL ) {
 		return return_err( "route: funct()", $this->errors, $code, $args ); 
@@ -385,16 +398,20 @@ class Route
 	private function append_element( $val, & $dstarr, $types = ["array","object","string"]) {
 		$fn = "append_element";
 		$ft = NULL;
-		$vt = gettype( $val ); 
+		$vt = strtolower( gettype( $val ) ); 
+		//to make ! work, just add a 0 to the beginning of the $types array
+		array_unshift( $types, 0 ); //array_unshift( $types, "" );
 
 		//check the top-most element	
 		if ( !array_search( $vt, $types, true ) ) {
 			//printf( "%s: %s\n", $fn, "top-level element didn't match type" );
 			return $this->err( self::ERR_TOP_LEVEL_MATCH );
-		}	
+		}
+
+		//echo "\nval: "; var_dump( $vt ); var_dump( $val );
 
 		//then check each element and add it
-		if ( !array_search( $vt, ["array", "object"] ) )
+		if ( !array_search( $vt, [0,"array", "object"], true ) )
 			$dstarr[] = $val;
 		else {
 			for ($i=0; $i<sizeof( $val ); $i++ ) {
@@ -403,9 +420,10 @@ class Route
 				if ( !array_search( $ivt, $types, true ) ) return $this->err( self::ERR_INN_LEVEL_MATCH );
 				$dstarr[] = $val[ $i ];
 			}
-		}	
+		}
 
 		//return 0 for success here
+		//echo "dstarr: ";var_dump( $dstarr );
 		return 0;
 	}
 
@@ -523,18 +541,18 @@ class Route
 					$any_set = [];
 
 					//what was found? (verbose debugging only)
-					printf( "route stub '%s' found\n", $_s );
+					//printf( "route stub '%s' found\n", $_s );
 
 					//Loop through all the different keys and add some stuff
 					foreach ( $_x as $xx => $yy ) {
-						printf( "\trunning closure for: '%-13s', ", $xx, gettype( $yy ) );
 						//check that the key exists, and if so, use the object to tell what
 						//to do
+						//printf( "\trunning closure for: '%-13s', ", $xx, gettype( $yy ) );
 					 	$ns = ( array_key_exists( $xx, $_r ) ) ? $yy( $_r[ $xx ] ) : -1;
-						printf( "%2d - %s\n", $ns, ($ns == -1) ? "not present":"" );
+						//printf( "%2d - %s\n", $ns, ($ns == -1) ? "not present":"" );
 								
 						//handle errors
-						if ( !$ns )
+						if ( $ns == 0 )
 							$any_set[] = $xx;
 						else if ( $ns == -1 )
 							continue;
@@ -564,8 +582,8 @@ class Route
 		//Should I just array map on all of these here?
 		$this->models = array_map( function ( $v ) { return "models/$v.php"; } , $this->models );
 		$this->views = array_map( function ( $v ) { return "views/$v.mustache"; } , $this->views );
-		$this->dump();	
-		die();
+		//$this->dump();	
+		//die();
 	}	
 }
 
@@ -615,92 +633,42 @@ $c = new Content; //not going to take anything as an argument so far
 $route = null;
 
 
-$g->dump( );
-//$r->dump( );
+//you rollin'
+//$g->dump( );$r->dump( );die();
 
-		echo "end prog.\n"; die();
-
-
-
-//TODO: flexible default
-//Serve your default route if there was no url or if the route is not supposed to be answered
-if ( !$g->route )
-	{ $g->model = [ "default" ]; $g->view = [ "default" ]; $g->ctype = "text/html"; }
-//If there was a URL, but we're not supposed to service it, serve a 404
-else if ( !$g->check_route( $g->route ) ) {
-	$g->server_throw( 404, "route exists, page not found..." );
-}
-//Looks like a URL exists, and we're supposed to do some work.
-else {
-	//Answer to tests
-	if ( $g->route == "test" ) 
-		{ $g->model = ["mock"]; $g->view = ["mock"]; $g->ctype = "text/html"; }
-	else {
-		//TODO: catch bad evaluation
-		//$g->dump("other route requested.<br />");
-
-		//TODO: function arr eval
-		//Check for requested model, if it doesn't exist, default might be what you want
-		//$modelFile = ( array_key_exists ( "model", $g->routes [ $g->route ]) )
-		$g->model = ( array_key_exists ( "model", $g->routes [ $g->route ]) )
-			? $g->routes [ $g->route ][ "model" ] : [ $default_ns ] ; 
-
-		//Same thing with views
-		//$viewFile = ( array_key_exists ( "view", $g->routes [ $g->route ] ) )
-		$g->view = ( array_key_exists ( "view", $g->routes [ $g->route ] ) )
-			? $g->routes [ $g->route ][ "view" ] : [ $default_ns ] ;
-
-		//...and content-type	
-		//TODO: alternate content type
-		$g->ctype = "text/html";
-	}
-}
-
-if ( 1 ) {
-	//This is an example of what I'd like to see in a debug window
-	$vv = array( 
-		model => $g->model
-	 ,view  => $g->view
-	 ,route => $g->route
-	);
-
-	$g->dump( $vv );
-	$g->dump_all_routes();	
-	die();
-}
 
 
 //Check and make sure that model files all exist and work
-foreach ( $g->model as $mfile ) {
+foreach ( $r->getmodels() as $mfile ) {
 	try {
 		//What is this value
 		$type = gettype( $mfile );
 		
 		//Execute what's asked
-		if ( $type == 'function' ) 
+		if ( $type == 'function' ) { 
 			$mfile( );
-
+		}
 		//Or check for file 
 		else if ( $type == 'string' ) {
 			//Make a full file name.
-			$fname = "models/{$mfile}.php";
-			( !stat( $fname ) ) ? $g->server_throw( 500, "model file: $fname doesn't exist." ) : 0;
-			( 1 ) ? include ( $fname ) : 0; 
+			( !stat( $mfile ) ) ? $g->server_throw( 500, "model file: $mfile doesn't exist." ) : 0;
+			//why does this not work?
+			include ( $mfile ); 
 		}
-	
 		//If debug is on, I want to see all of this crap...
 		//( 0 ) ? $g->dump($model) : 0;
 	}
 	catch ( Exception $e ) {
 		$str = $e->getMessage();
 		$strstr = "Couldn't handle all the awesomeness that is in $mfile: $str"; 
-		server_throw( 500, $strstr );
+		$g->server_throw( 500, $strstr );
 	}
 }
 
 
+echo "end prog.\n"; die();
 //Check for the view file and load it (or something along those lines)
-foreach ( $g->view as $vfile ) {
+foreach ( $r->getviews() as $vfile ) {
 	//For right now (as of the next 2 hours), views are just files in mustache...
 	try {
 		if ( $g->ctype == "text/html" ) {
